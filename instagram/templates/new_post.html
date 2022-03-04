@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="columns is-mobile has-text-centered">
+        <div class="column is-half is-offset-one-quarter">
+            <div class="card">
+                <div class="card-content">
+                    <form method="post"  enctype="multipart/form-data" action="" role="form">
+                        {% csrf_token %}
+                        <h3 class="title is-3">Dodaj post</h3>
+                        <div class="field">
+                            <p class="control has-icons-left">
+                                <label class="label is-medium">Wybierz zdjęcie</label>
+                                {{ form.picture }}
+                            </p>
+                        </div>
+                        <div class="field">
+                            <p class="control has-icons-left">
+                                <label class="label is-medium">Opis</label>
+                                {{ form.caption }}
+                            </p>
+                        </div>
+                        <div class="field">
+                            <p class="control has-icons-left">
+                                <label class="label is-medium">Tagi(oddzielone przecinkiem)</label>
+                                {{ form.tags }}
+                            </p>
+                        </div>
+                        <div class="field">
+                            <p class="control">
+                                <button type="submit" name="action" class="button is-success">
+                                    Dodaj post
+                                </button>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
