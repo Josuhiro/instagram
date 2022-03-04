@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 
+from authy.models import Profile
 from .forms import PostForm
 from .models import *
 
@@ -48,7 +49,13 @@ def newPost(request):
 @login_required
 def postDetails(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    context = {'post': post}
+    favorited = False
+    if request.user.is_authenticated:
+        profile = Profile.objects.get(user=request.user)
+        if profile.favorites.filter(id=post_id).exists():
+            favorited = True
+
+    context = {'post': post, 'favorited': favorited}
 
     return render(request, 'post_detail.html', context)
 
@@ -60,3 +67,36 @@ def tags(request, tag_slug):
     context = {'tag': tag, 'posts': posts}
 
     return render(request, 'tag.html', context)
+
+
+@login_required
+def like(request, post_id):
+    user = request.user
+    post = Post.objects.get(id=post_id)
+    current_likes = post.likes
+
+    liked = Likes.objects.filter(user=user, post=post).count()
+
+    if not liked:
+        like = Likes.objects.create(user=user, post=post)
+        current_likes += 1
+    else:
+        Likes.objects.filter(user=user, post=post).delete()
+        current_likes -= 1
+    post.likes = current_likes
+    post.save()
+    return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
+
+@login_required
+def favorite(request, post_id):
+    user = request.user
+    post = Post.objects.get(id=post_id)
+    profile = Profile.objects.get(user=user)
+
+    if profile.favorites.filter(id=post_id).exists():
+        profile.favorites.remove(post)
+    else:
+        profile.favorites.add(post)
+
+    return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))

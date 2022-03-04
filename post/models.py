@@ -59,4 +59,9 @@ class Stream(models.Model):
             stream.save()
 
 
+class Likes(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_like')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_likes')
+
+
 post_save.connect(Stream.add_post, sender=Post)
