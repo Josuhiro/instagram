@@ -17,9 +17,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from authy.views import userProfile, follow
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('uzytkownik/', include('authy.urls')),
-    path('post/', include('post.urls')),
+    path('posty/', include('post.urls')),
+    path('<username>/', userProfile, name='profile'),
+    path('<username>/zapisane', userProfile, name='profilefavorites'),
+    path('<username>/obserwuj/<option>', follow, name='follow'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,178 +1,82 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Fishstagram</title>
-    <link rel="stylesheet" href="css/bulma.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-          rel="stylesheet">
-</head>
-<body>
-<nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="https://bulma.io">
-            <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
-        </a>
-
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
-
-    <div id="navbarBasicExample" class="navbar-menu">
-        <div class="navbar-start">
-            <a class="navbar-item">
-                <i class="material-icons">home</i>
-                Strona główna
-            </a>
-
-            <a class="navbar-item">
-                <i class="material-icons">explore</i>
-                Przeglądaj
-            </a>
-            <a class="navbar-item">
-                <i class="material-icons">notifications</i>
-                Powiadomienia
-            </a>
-            <a class="navbar-item">
-                <i class="material-icons">person</i>
-                Profil
-            </a>
-
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
-                    <i class="material-icons">settings</i>
-                    Ustawienia
-                </a>
-
-                <div class="navbar-dropdown">
-                    <a class="navbar-item">
-                        Zmień hasło
-                    </a>
-                    <a class="navbar-item">
-                        Kontakt
-                    </a>
-                    <a class="navbar-item">
-                        Zgłoś problem
-                    </a>
-                    <hr class="navbar-divider">
-                    <a class="navbar-item">
-                        Wyloguj
-                    </a>
-                </div>
-            </div>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <article class="media">
+        <div class="media-left">
+            <figure class="image is256x256">
+                <img class="is-rounded" src="https://bulma.io/images/placeholders/256x256.png">
+            </figure>
         </div>
-    </div>
-</nav>
-<section class="section">
-    <div class="container">
-        <article class="media">
-            <div class="media-left">
-                <figure class="image is256x256">
-                    <img class="is-rounded" src="https://bulma.io/images/placeholders/256x256.png">
-                </figure>
+        <div class="media-content">
+            <div class="content">
+                <h1 class="title">@{{ profile.user }}</h1>
+                <h2 class="subtitle">{% if profile.first_name %} {{ profile.first_name }}
+                    {{ profile.last_name }}{% endif %}</h2>
+                {% if user.is_authenticated and user != profile.user %}
+                    <div class="media-right">
+                        {% if follow_status == True %}
+                            <a href="{% url 'follow' profile.user 0 %}" class=" button is-danger">Przestań
+                                obserwować</a>
+                        {% else %}
+                            <a href="{% url 'follow' profile.user 1 %}" class=" button is-success">Obserwuj</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
-            <div class="media-content">
-                <div class="content">
-                    <h1 class="title">@użytkownik</h1>
-                    <h2 class="subtitle">dane</h2>
-                    <button class=" button is-success">Obserwuj</button>
+
+
+            <nav class="level is-mobile">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Posty</p>
+                        <p class="title">{{ posts_count }}</p>
+                    </div>
                 </div>
-
-
-                <nav class="level is-mobile">
-                    <div class="level-item has-text-centered">
-                        <div>
-                            <p class="heading">Tweets</p>
-                            <p class="title">3,456</p>
-                        </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Obserwuje</p>
+                        <p class="title">{{ following_count }}</p>
                     </div>
-                    <div class="level-item has-text-centered">
-                        <div>
-                            <p class="heading">Following</p>
-                            <p class="title">123</p>
-                        </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Obserwujący</p>
+                        <p class="title">{{ followers_count }}</p>
                     </div>
-                    <div class="level-item has-text-centered">
-                        <div>
-                            <p class="heading">Followers</p>
-                            <p class="title">456K</p>
-                        </div>
-                    </div>
-                    <div class="level-item has-text-centered">
-                        <div>
-                            <p class="heading">Likes</p>
-                            <p class="title">789</p>
-                        </div>
-                    </div>
-                </nav>
-                <p class="subtitle">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab assumenda atque dolore,
-                    eaque error excepturi fugiat illum iste labore quas quibusdam quidem quo ratione sed vel veritatis
-                    vitae voluptas voluptates.</p>
+                </div>
+            </nav>
+            <p class="subtitle">{% if profile.profile_info %}{{ profile.profile_info }}{% endif %}</p>
+            <p class="subtitle">{% if profile.location %}Lokalizacja: {{ profile.location }}{% endif %}</p>
+            <p class="subtitle">{% if profile.url %}URL: {{ profile.url }}{% endif %}</p>
+            {% if user == profile.user %}
                 <button class="button">Edytuj profil</button>
-            </div>
-        </article>
-    </div>
-</section>
-<section class="section">
-    <div class="container">
-        <div class="tabs is-centered">
-            <ul>
-                <li class="is-active"><a><i class="material-icons">image</i>Posty</a></li>
-                <li><a><i class="material-icons">save_alt</i>Zapisane</a></li>
-            </ul>
+            {% endif %}
         </div>
-        <div class="columns is-mobile is-multiline is-centered">
-            <div class="column is-one-quarter">
-                <div class="box">
-
-                    <figure class="image is-256x256">
-                        <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                    </figure>
-
-                </div>
+    </article>
+    </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="tabs is-centered">
+                <ul>
+                    <li class="{% if url_name == 'profile' %} is-active{% endif %}"><a
+                            href="{% url 'profile' profile.user %}"><i class="material-icons">image</i>Posty</a></li>
+                    <li class="{% if url_name == 'profilefavorites' %} is-active {% endif %}"><a
+                            href="{% url 'profilefavorites' profile.user %}"><i class="material-icons">save_alt</i>Zapisane</a>
+                    </li>
+                </ul>
             </div>
-            <div class="column is-one-quarter">
-                <div class="box">
-
-                    <figure class="image is-256x256">
-                        <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                    </figure>
-
-                </div>
-            </div>
-            <div class="column is-one-quarter">
-                <div class="box">
-
-                    <figure class="image is-256x256">
-                        <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                    </figure>
-
-                </div>
-            </div>
-            <div class="column is-one-quarter">
-                <div class="box">
-
-                    <figure class="image is-256x256">
-                        <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                    </figure>
-
-                </div>
-            </div>
-            <div class="column is-one-quarter">
-                <div class="box">
-
-                    <figure class="image is-256x256">
-                        <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                    </figure>
-
-                </div>
+            <div class="columns is-mobile is-multiline is-centered">
+                {% for  post in posts %}
+                    <div class="column is-one-quarter">
+                        <div class="box">
+                            <figure class="image is-256x256">
+                                <a href="{{ post.get_absolute_url }}"><img src="{{ post.picture.url }}"></a>
+                            </figure>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
-    </div>
-</section>
-</body>
-</html>
+    </section>
+{% endblock content %}
