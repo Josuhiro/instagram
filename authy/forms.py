@@ -6,17 +6,17 @@ from authy.models import Profile
 
 def InvalidUser(value):
     if '@' in value or '+' in value or '-' in value:
-        raise ValidationError('This is an Invalid user, Do not user these chars: @ , - , + ')
+        raise ValidationError('Użytkownik nie może zawierać znaków: @ , - , + ')
 
 
 def UniqueEmail(value):
     if User.objects.filter(email__iexact=value).exists():
-        raise ValidationError('User with this email already exists.')
+        raise ValidationError('Użytkownik z podanym adresem email już istnieje')
 
 
 def UniqueUser(value):
     if User.objects.filter(username__iexact=value).exists():
-        raise ValidationError('User with this username already exists.')
+        raise ValidationError('Użytkownik z podaną nazwą już istnieje')
 
 
 class SignupForm(forms.ModelForm):
@@ -41,7 +41,7 @@ class SignupForm(forms.ModelForm):
         confirm_password = self.cleaned_data.get('confirm_password')
 
         if password != confirm_password:
-            self._errors['password'] = self.error_class(['Passwords do not match. Try again'])
+            self._errors['password'] = self.error_class(['Hasła są niezgodne, spróbuj ponownie'])
         return self.cleaned_data
 
 
@@ -63,19 +63,19 @@ class ChangePasswordForm(forms.ModelForm):
         confirm_password = self.cleaned_data.get('confirm_password')
         user = User.objects.get(pk=id)
         if not user.check_password(old_password):
-            self._errors['old_password'] = self.error_class(['Old password do not match.'])
+            self._errors['old_password'] = self.error_class(['Stare hasło nie zgadza się'])
         if new_password != confirm_password:
-            self._errors['new_password'] = self.error_class(['Passwords do not match.'])
+            self._errors['new_password'] = self.error_class(['Hasła nie są zgodne'])
         return self.cleaned_data
 
 
 class EditProfileForm(forms.ModelForm):
     picture = forms.ImageField(required=False)
-    first_name = forms.CharField(widget=forms.TextInput(), max_length=50, required=False)
-    last_name = forms.CharField(widget=forms.TextInput(), max_length=50, required=False)
-    location = forms.CharField(widget=forms.TextInput(), max_length=25, required=False)
-    url = forms.URLField(widget=forms.TextInput(), max_length=60, required=False)
-    profile_info = forms.CharField(widget=forms.TextInput(), max_length=260, required=False)
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'input is-medium'}), max_length=50, required=False)
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'input is-medium'}), max_length=50, required=False)
+    location = forms.CharField(widget=forms.TextInput(attrs={'class': 'input is-medium'}), max_length=25, required=False)
+    url = forms.URLField(widget=forms.TextInput(attrs={'class': 'input is-medium'}), max_length=60, required=False)
+    profile_info = forms.CharField(widget=forms.Textarea(attrs={'class': 'input is-medium'}), max_length=150, required=False)
 
     class Meta:
         model = Profile

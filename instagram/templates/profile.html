@@ -3,8 +3,12 @@
 {% block content %}
     <article class="media">
         <div class="media-left">
-            <figure class="image is256x256">
-                <img class="is-rounded" src="https://bulma.io/images/placeholders/256x256.png">
+            <figure class="image is-256x256">
+                {% if profile.picture %}
+                    <img class="is-rounded" src="{{ profile.picture.url }}" >
+                {% else %}
+                    <img class="is-rounded" src="https://bulma.io/images/placeholders/256x256.png">
+                {% endif %}
             </figure>
         </div>
         <div class="media-content">
@@ -49,7 +53,7 @@
             <p class="subtitle">{% if profile.location %}Lokalizacja: {{ profile.location }}{% endif %}</p>
             <p class="subtitle">{% if profile.url %}URL: {{ profile.url }}{% endif %}</p>
             {% if user == profile.user %}
-                <button class="button">Edytuj profil</button>
+                <a href="{% url 'edit_profile' %}" class="button">Edytuj profil</a>
             {% endif %}
         </div>
     </article>
