@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 
 from authy.models import Profile
+from comment.forms import CommentForm
+from comment.models import Comment
 from .forms import PostForm
 from .models import *
 
@@ -50,12 +52,24 @@ def newPost(request):
 def postDetails(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     favorited = False
+    comments = Comment.objects.filter(post=post).order_by('date')
+    form = CommentForm()
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.user = request.user
+            comment.save()
+            return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
     if request.user.is_authenticated:
         profile = Profile.objects.get(user=request.user)
         if profile.favorites.filter(id=post_id).exists():
             favorited = True
 
-    context = {'post': post, 'favorited': favorited}
+    context = {'post': post, 'favorited': favorited, 'comments': comments, 'form': form}
 
     return render(request, 'post_detail.html', context)
 
