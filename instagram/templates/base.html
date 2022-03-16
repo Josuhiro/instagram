@@ -36,9 +36,12 @@
                 <span class="badge">{{ directs_count }}</span>
                 {% endif %}
             </a>
-            <a  class="navbar-item">
+            <a href="{% url 'show_notifications' %}" class="navbar-item">
                 <i class="material-icons">notifications</i>
                 Powiadomienia
+                 {% if notifications_count %}
+                <span class="badge">{{ notifications_count }}</span>
+                {% endif %}
 
             </a>
             <a href="{% url 'profile' request.user %}" class="navbar-item">
