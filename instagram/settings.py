@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'authy.apps.AuthyConfig',
     'post.apps.PostConfig',
     'comment.apps.CommentConfig',
+    'direct_messages.apps.DirectMessagesConfig',
 ]
 
 MIDDLEWARE = [
@@ -65,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'direct_messages.views.check_directs',
             ],
         },
     },
